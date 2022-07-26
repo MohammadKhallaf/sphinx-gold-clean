@@ -1,0 +1,40 @@
+{
+  "name": "sphinx-gold-clean",
+  "version": "1.0.0",
+  "description": "gulp for auto-clean files in the gold stage ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "css": "^3.0.0",
+    "del": "^7.0.0",
+    "gulp": "^4.0.2",
+    "gulp-clean-css": "^4.3.0",
+    "gulp-cleanhtml": "^1.0.3",
+    "gulp-html-beautify": "^1.0.1",
+    "gulp-imagemin": "7.1.0",
+    "gulp-plumber": "^1.2.1",
+    "gulp-uglify": "^3.0.2",
+    "gulp-util": "^3.0.8",
+    "htmlparser2": "^8.0.1",
+    "lodash": "^4.17.21",
+    "mime": "^3.0.0",
+    "through2": "^4.0.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MohammadKhallaf/sphinx-gold-clean.git"
+  },
+  "keywords": [
+    "gulp",
+    "clean",
+    "minify"
+  ],
+  "author": "Mohammed Khallaf",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MohammadKhallaf/sphinx-gold-clean/issues"
+  },
+  "homepage": "https://github.com/MohammadKhallaf/sphinx-gold-clean#readme"
+}
