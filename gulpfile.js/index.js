@@ -1,9 +1,13 @@
+const { src, series, parallel } = require("gulp");
 const cleanhtml = require("./clean-html");
 const cleancss = require("./clean-css");
-const imagemin = require("./image-min");
-const imageclean = require("./clean-images");
+const imagemin = require("./minify-images");
+const imageclean = require("./clean-images.js");
+const cleanjs = require("./clean-js");
 
-exports.cleanhtml = cleanhtml;
-exports.cleancss = cleancss;
+exports.html = cleanhtml;
+exports.css = cleancss;
+exports.js = cleanjs;
+exports.delimg = imageclean;
 exports.imagemin = imagemin;
-exports.imageclean = imageclean;
+exports.default = parallel(cleancss, cleanhtml);
