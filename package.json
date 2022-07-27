@@ -2,25 +2,34 @@
   "name": "sphinx-gold-clean",
   "version": "1.0.0",
   "description": "gulp for auto-clean files in the gold stage ",
-  "main": "index.js",
+  "main": "gulpfile.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
+    "@babel/core": "^7.18.9",
+    "@babel/preset-env": "^7.18.9",
+    "@babel/register": "^7.18.9",
     "css": "^3.0.0",
-    "del": "^7.0.0",
+    "del": "^2.2.2",
+    "esm": "^3.2.25",
     "gulp": "^4.0.2",
+    "gulp-beautify": "^3.0.0",
     "gulp-clean-css": "^4.3.0",
     "gulp-cleanhtml": "^1.0.3",
     "gulp-html-beautify": "^1.0.1",
     "gulp-imagemin": "7.1.0",
+    "gulp-minifier": "^3.5.0",
+    "gulp-minify": "^3.1.0",
     "gulp-plumber": "^1.2.1",
     "gulp-uglify": "^3.0.2",
     "gulp-util": "^3.0.8",
     "htmlparser2": "^8.0.1",
     "lodash": "^4.17.21",
     "mime": "^3.0.0",
-    "through2": "^4.0.2"
+    "through2": "^4.0.2",
+    "uglify-js": "^3.16.3",
+    "vinyl-paths": "^5.0.0"
   },
   "repository": {
     "type": "git",
@@ -36,5 +45,8 @@
   "bugs": {
     "url": "https://github.com/MohammadKhallaf/sphinx-gold-clean/issues"
   },
-  "homepage": "https://github.com/MohammadKhallaf/sphinx-gold-clean#readme"
+  "homepage": "https://github.com/MohammadKhallaf/sphinx-gold-clean#readme",
+  "dependencies": {
+    "gulp-delete-unused-images": "^0.0.4"
+  }
 }
