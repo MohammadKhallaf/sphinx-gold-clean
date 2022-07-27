@@ -1,14 +1,14 @@
-import through2 from "through2";
-import mime from "mime";
-import css from "css";
-import { Parser } from "htmlparser2";
-import gutil from "gulp-util";
-import path from "path";
-import _ from "lodash";
-import { deleteAsync } from "del";
-// const { deleteAsync } from "del";
-var PLUGIN_NAME = "gulp-unused-images";
+const through2 = require("through2");
+const mime = require("mime");
+const css = require("css");
+const { Parser } = require("htmlparser2");
+const gutil = require("gulp-util");
+const path = require("path");
+const _ = require("lodash");
+const del = require("del");
+
 let mPath;
+const PLUGIN_NAME = "custom-delete-unused-images";
 function unusedImages(options) {
   options = options || {
     log: true,
@@ -50,10 +50,12 @@ function unusedImages(options) {
       } else if (name == "image" && attribs["xlink:href"]) {
         addUsed(attribs["xlink:href"]);
       } else {
-        const imgMatch = attribs.style?.match(/url\(("|'|)(.+?)\1\)/);
-        if (imgMatch) {
-          if (imgMatch[2]) {
-            addUsed(imgMatch[2]);
+        if (attribs.style) {
+          const imgMatch = attribs.style.match(/url\(("|'|)(.+?)\1\)/);
+          if (imgMatch) {
+            if (imgMatch[2]) {
+              addUsed(imgMatch[2]);
+            }
           }
         }
       }
@@ -90,21 +92,30 @@ function unusedImages(options) {
           return;
         }
         if (rule.type === "rule") {
-          rule.declarations?.forEach(function (declaration) {
-            var match = declaration.value?.match(/url\(("|'|)(.+?)\1\)/);
+          if (rule.declarations) {
+            rule.declarations.forEach(function (declaration) {
+              if (declaration.value) {
+                var match = declaration.value.match(/url\(("|'|)(.+?)\1\)/);
 
-            if (match) addUsed(match[2]);
-          });
-        } else {
-          rule.rules?.forEach((r) => {
-            r.declarations?.forEach(function (declaration) {
-              var match = declaration.value?.match(/url\(("|'|)(.+?)\1\)/);
-
-              if (match) {
-                addUsed(match[2]);
+                if (match) addUsed(match[2]);
               }
             });
-          });
+          }
+        } else {
+          if (rule.rules) {
+            rule.rules.forEach((r) => {
+              if (r.declarations) {
+                r.declarations.forEach(function (declaration) {
+                  if (declaration.value) {
+                    var match = declaration.value.match(/url\(("|'|)(.+?)\1\)/);
+                    if (match) {
+                      addUsed(match[2]);
+                    }
+                  }
+                });
+              }
+            });
+          }
         }
       });
     } catch (e) {
@@ -132,30 +143,22 @@ function unusedImages(options) {
           const imgPath = String(
             path.posix.join(
               mPath.replace(/\\/g, "/"),
-              "resources",
+              "**",
               "images",
               "**",
               img
             )
           );
-          // mPath, "resources", "images",
-          console.log("mPath:\t" + mPath);
-          console.log("imgPath:\t" + imgPath);
-          // try {
-          // const deletedFilePaths = del(imgPath)
-          //   .then((paths) => {
-          //     console.log("Deleted files:\n", paths.join("\n"));
-          //   })
-          const deletedFilePaths = await deleteAsync([imgPath], {
-            cwd: mPath,
-            onProgress: (progress) => {
-              console.log(progress);
-            },
-          });
-          console.log("Deleted files:\n", deletedFilePaths.join("\n"));
-          // } catch (e) {
-          //   console.log(imgPath + " Not Found");
-          // }
+    
+          try {
+            const deletedFilePaths = del(imgPath).then((paths) => {
+              console.log("Deleted files:\n", paths.join("\n"));
+            });
+
+            console.log("Deleted files:\n", deletedFilePaths.join("\n"));
+          } catch (e) {
+            console.log(imgPath + " Not Found");
+          }
         });
       }
       this.emit(
@@ -171,4 +174,4 @@ function unusedImages(options) {
   return transform;
 }
 
-export default unusedImages;
+module.exports = unusedImages;
