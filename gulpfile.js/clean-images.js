@@ -1,3 +1,8 @@
+const gulp = require("gulp");
+const plumber = require("gulp-plumber");
+const { lessonsArr } = require("../helpers/find-dirs");
+const unusedImages = require("../helpers/unused-custom.js");
+
 module.exports = function (cb) {
   lessonsArr.forEach((nameLesson) => {
     console.log(nameLesson);
@@ -14,9 +19,9 @@ module.exports = function (cb) {
           delete: true,
         })
       )
-      .on("end", () =>
-        console.log("-".repeat(10) + nameLesson + "-".repeat(10))
-      )
+      // .on("end", () =>
+      //   console.log("-".repeat(10) + nameLesson + "-".repeat(10))
+      // )
       .pipe(plumber.stop());
   });
   cb();

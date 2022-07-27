@@ -1,14 +1,9 @@
 const { lessonsArr } = require("../helpers/find-dirs");
+const cleanCSS = require("gulp-clean-css");
 const gulp = require("gulp");
 
-module.exports = function (cb) {
-  lessonsArr.forEach((nameLesson) => {
-    gulp
-      .src(`${nameLesson}/assets/main_site/css/*.css`)
-      .pipe(cleanCSS({ format: "beautify" }))
-      .pipe(gulp.dest(`${nameLesson}/assets/main_site/css`))
-      .on("end", () => console.log(`${nameLesson} css Clean Done`));
-  });
-
-  cb();
-};
+module.exports = async () =>
+  await gulp
+    .src(`src/**/*.css`)
+    .pipe(cleanCSS({ format: "beautify" }))
+    .pipe(gulp.dest(`src`));
