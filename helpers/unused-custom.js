@@ -149,7 +149,7 @@ function unusedImages(options) {
               img
             )
           );
-    
+
           try {
             const deletedFilePaths = del(imgPath).then((paths) => {
               console.log("Deleted files:\n", paths.join("\n"));
