@@ -4,7 +4,9 @@
   "description": "gulp for auto-clean files in the gold stage ",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "gulp": "node_modules/.bin/gulp",
+    "gulp:list": "node_modules/.bin/gulp -T"
   },
   "devDependencies": {
     "@babel/core": "^7.18.9",
