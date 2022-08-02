@@ -149,13 +149,12 @@ function unusedImages(options) {
               img
             )
           );
-
+          console.log(imgPath);
           try {
-            const deletedFilePaths = del(imgPath).then((paths) => {
-              console.log("Deleted files:\n", paths.join("\n"));
-            });
-
-            console.log("Deleted files:\n", deletedFilePaths.join("\n"));
+            // const deletedFilePaths = del(imgPath).then((paths) => {
+            //   console.log("Deleted files:\n", paths.join("\n"));
+            // });
+            // console.log("Deleted files:\n", deletedFilePaths.join("\n"));
           } catch (e) {
             console.log(imgPath + " Not Found");
           }

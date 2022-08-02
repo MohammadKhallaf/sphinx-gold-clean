@@ -13,7 +13,7 @@ import gulpPlumber from "gulp-plumber";
 import gulpCheerio from "gulp-cheerio";
 import _ from "lodash";
 import { each } from "lodash";
-
+import purgecss from "gulp-purgecss";
 export const moveNotImg = (cb) => {
   src(["src/**/*", "!src/**/*.{jpg,jpeg,png,PNG,JPEG}"]).pipe(dest("dist"));
   cb();
@@ -26,17 +26,37 @@ export const customTask = async () =>
         // console.log($("[src]"));
         $("[src]").each(function () {
           // lowercase all path
-          const fileName = $(this).attr("src").split("/").at(-1);
+          const lastfileName = $(this).attr("src").split("/").at(-1);
           const srcText = _.replace(_.lowerCase(fileName), / /g, "");
           console.log(srcText);
           // console.log(srcText.split("/").at(-1));
           // srcText.split("/").at(-1)
-          $(this).attr("src", srcText);
+          // $(this).attr("src", srcText);
         });
         done();
       })
     )
     .pipe(dest("src"));
+export const cssPrg = () =>
+  src(["src/**/*.css", "!src/**/*.min.css"])
+    .pipe(
+      purgecss({
+        content: ["src/**/index.html", "src/**/*.js"],
+      })
+    )
+    .pipe(dest("src"));
+export const cssfx = () => {
+  const postcss = require("gulp-postcss");
+  const postparser = require("postcss-safe-parser");
+
+  return (
+    src(["src/**/*.css", "!src/**/*.min.css"])
+      // .pipe( sourcemaps.init() )
+      .pipe(postcss([require("postcss-safe-parser")]))
+      // .pipe( sourcemaps.write('.') )
+      .pipe(dest("src"))
+  );
+};
 exports.html = cleanhtml;
 exports.css = cleancss;
 exports.js = cleanjs;

@@ -10,4 +10,4 @@ export default async () =>
         return opt;
       })
     )
-    .pipe(dest("dist"));
+    .pipe(dest("src"));
