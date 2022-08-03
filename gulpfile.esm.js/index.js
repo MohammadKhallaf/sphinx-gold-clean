@@ -14,6 +14,27 @@ import gulpCheerio from "gulp-cheerio";
 import _ from "lodash";
 import { each } from "lodash";
 import purgecss from "gulp-purgecss";
+import deleteEmpty from "delete-empty";
+export const rmEmpty = (cb) => {
+  deleteEmpty("src/*/")
+    .then((deleted) => console.log("->", deleted)) //=> ['foo/aa/', 'foo/a/cc/', 'foo/b/', 'foo/c/']
+    .catch(console.error);
+  cb();
+};
+export const delFolders = async () =>
+  await del([
+    // "src/**/webfonts",
+    // "src/**/sass",
+    // "src/**/fontawesome*",
+    // "src/**/INFROMAN*",
+    // "src/**/AptiferSansLTPro*",
+    // "src/**/CandyShopBlack*",
+    // "src/**/LCALLIG*",
+    "src/**/Quicksand*",
+    "src/**/quicksandlight*",
+    "src/**/quicksandregular*",
+  ]);
+
 export const moveNotImg = (cb) => {
   src(["src/**/*", "!src/**/*.{jpg,jpeg,png,PNG,JPEG}"]).pipe(dest("dist"));
   cb();
@@ -23,15 +44,24 @@ export const customTask = async () =>
   await src("src/**/*.html")
     .pipe(
       gulpCheerio(function ($, file, done) {
-        // console.log($("[src]"));
-        $("[src]").each(function () {
-          // lowercase all path
-          const lastfileName = $(this).attr("src").split("/").at(-1);
-          const srcText = _.replace(_.lowerCase(fileName), / /g, "");
-          console.log(srcText);
-          // console.log(srcText.split("/").at(-1));
-          // srcText.split("/").at(-1)
-          // $(this).attr("src", srcText);
+        $("img[src]").each(function () {
+          const fileName = $(this).attr("src").split("/").at(-1).split(".")[0];
+          const lwrFileName = _.replace(_.lowerCase(fileName), / /g, "");
+          const fileExt = $(this).attr("src").split("/").at(-1).split(".")[1];
+          const lwrFileExt = _.replace(_.lowerCase(fileExt), / /g, "");
+          const fullName = [fileName, fileExt].join(".");
+          const lwrfullName = [lwrFileName, lwrFileExt].join(".");
+
+          console.log("old->", fileName);
+          console.log(
+            "new->",
+            _.replace($(this).attr("src"), fullName, lwrfullName)
+          );
+
+          $(this).attr(
+            "src",
+            _.replace($(this).attr("src"), fullName, lwrfullName)
+          );
         });
         done();
       })

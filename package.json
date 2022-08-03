@@ -14,6 +14,7 @@
     "@babel/register": "^7.18.9",
     "css": "^3.0.0",
     "del": "^2.2.2",
+    "delete-empty": "^3.0.0",
     "esm": "^3.2.25",
     "gulp": "^4.0.2",
     "gulp-beautify": "^3.0.0",

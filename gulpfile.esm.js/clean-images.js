@@ -11,6 +11,7 @@ module.exports = function (cb) {
         `${nameLesson}/resources/images/**/*`,
         `${nameLesson}/assets/**/*.css`,
         `${nameLesson}/*.html`,
+        `!${nameLesson}/resources/exercise`
       ])
       .pipe(plumber())
       .pipe(
