@@ -2,7 +2,7 @@ const gulp = require("gulp");
 const plumber = require("gulp-plumber");
 const { lessonsArr } = require("../helpers/find-dirs");
 const unusedImages = require("../helpers/unused-custom.js");
-
+const gulpDebug = require("gulp-debug");
 module.exports = function (cb) {
   lessonsArr.forEach((nameLesson) => {
     console.log(nameLesson);
@@ -10,9 +10,11 @@ module.exports = function (cb) {
       .src([
         `${nameLesson}/resources/images/**/*`,
         `${nameLesson}/assets/**/*.css`,
-        `${nameLesson}/*.html`,
-        `!${nameLesson}/resources/exercise`
+        `${nameLesson}/index.html`,
+        `!${nameLesson}/resources/exercise`,
       ])
+      // .pipe(gulpDebug())
+
       .pipe(plumber())
       .pipe(
         unusedImages({
@@ -20,10 +22,28 @@ module.exports = function (cb) {
           delete: true,
         })
       )
-      // .on("end", () =>
-      //   console.log("-".repeat(10) + nameLesson + "-".repeat(10))
-      // )
+      .on("end", () =>
+        console.log("-".repeat(10) + nameLesson + "-".repeat(10))
+      )
       .pipe(plumber.stop());
   });
+
+  // gulp
+  //   .src([
+  //     `src/**/images/`,
+  //     `src/**/*.css`,
+  //     `src/ch1/**/resources/exercise/*/index.html`,
+
+  //   ])
+  //   // .pipe(plumber())
+  //   .pipe(gulpDebug())
+  //   .pipe(
+  //     unusedImages({
+  //       log: true,
+  //       delete: true,
+  //     })
+  //   )
+  // .pipe(plumber.stop());
+
   cb();
 };
