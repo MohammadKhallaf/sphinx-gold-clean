@@ -7,13 +7,19 @@ module.exports = function (cb) {
   lessonsArr.forEach((nameLesson) => {
     console.log(nameLesson);
     gulp
+      // .src([
+      //   `${nameLesson}/resources/images/**/*`,
+      //   `${nameLesson}/assets/**/*.css`,
+      //   `${nameLesson}/index.html`,
+      //   `!${nameLesson}/resources/exercise`,
+      // ])
       .src([
-        `${nameLesson}/resources/images/**/*`,
-        `${nameLesson}/assets/**/*.css`,
-        `${nameLesson}/index.html`,
-        `!${nameLesson}/resources/exercise`,
+        `${nameLesson}/resources/exercise/**/*(*.css|index.html|assets/images)/**`,
+        // `${nameLesson}/resources/exercise/**/*.css`,
+        // `${nameLesson}/resources/exercise/**/index.html`,
+        // `!${nameLesson}/resources/exercise`,
       ])
-      // .pipe(gulpDebug())
+      .pipe(gulpDebug())
 
       .pipe(plumber())
       .pipe(

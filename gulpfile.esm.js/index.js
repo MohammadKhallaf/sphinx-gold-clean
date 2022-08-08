@@ -17,6 +17,9 @@ import { each } from "lodash";
 import purgecss from "gulp-purgecss";
 import deleteEmpty from "delete-empty";
 
+import gulp from "gulp";
+
+import glob from "glob";
 import debug from "gulp-debug";
 export const rmEmpty = (cb) => {
   deleteEmpty("src/*/")
@@ -33,7 +36,7 @@ export const delFolders = async () =>
     "src/**/AptiferSansLTPro*",
     "src/**/CandyShopBlack*",
     "src/**/LCALLIG*",
-    // "src/**/Quicksand*", // only after renaming the fonts to lower case
+    "src/**/Quicksand*", // only after renaming the fonts to lower case
     "src/**/quicksandlight*",
     "src/**/quicksandregular*",
     "src/**/quicksandsemi*",
@@ -53,7 +56,10 @@ export const findEXc = async (cb) => {
             x++;
           }
           console.log("used excercie path ->", $(this).attr("src"));
-          console.log(`ex${x}->`, $(this).attr("src").split("exercise/")[1].split("/index")[0]);
+          console.log(
+            `ex${x}->`,
+            $(this).attr("src").split("exercise/")[1].split("/index")[0]
+          );
           crnt = $(this).attr("src");
         });
         console.log("-".repeat(10));
@@ -69,7 +75,6 @@ export const findAud = async (cb) => {
         let x = 0;
         let crnt = "";
         $("[data-audiosrc]").each(function () {
-      
           console.log("used audio path ->", $(this).attr("data-audiosrc"));
           // console.log(`ex${x}->`, $(this).attr("src").split("exercise/")[1].split("/index")[0]);
         });
@@ -78,6 +83,15 @@ export const findAud = async (cb) => {
     );
   cb();
 };
+
+export const findLight = async () =>
+  await src("src/**/index.html")
+    .pipe(debug())
+    .pipe(
+      gulpCheerio(function ($, file) {
+        console.log($(".iframe-lightbox").length);
+      })
+    );
 export const renameInPath = async () =>
   await src("src/**/*.html")
     .pipe(debug())
@@ -115,6 +129,26 @@ export const cssPrg = () =>
     )
     .pipe(dest("src"));
 
+// const destinationFolders = glob.sync("src/**/mainsite/js");
+// const destinationFolders = glob.sync("src/**/exercise/*/css/lib");
+// const destinationFolders = glob.sync("src/**/exercise/*/font");
+const destinationFolders = glob.sync("src/**/assets/mainsite/css");
+// const destinationFolders = glob.sync("src/**/assets/mainsite/css");
+// ,"src/**/exercise/**/js/lib"]);
+// const destinationFolders = glob.sync(["src/**/mainsite/js"
+
+gulp.task("copyFiles", function () {
+  // var stream = gulp.src("library/popper.min.js");
+  // var stream = gulp.src("library/animate.min.css");
+  var stream = gulp.src("library/fonts.css");
+
+  destinationFolders.forEach(function (skinFolder) {
+    stream = stream.pipe(gulp.dest(skinFolder,{overwrite:true}));
+    console.log(skinFolder);
+  });
+
+  return stream;
+});
 exports.html = cleanhtml;
 exports.css = css.clean;
 exports.js = cleanjs;
