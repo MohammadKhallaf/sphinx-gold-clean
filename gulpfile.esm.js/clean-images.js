@@ -14,10 +14,10 @@ module.exports = function (cb) {
       //   `!${nameLesson}/resources/exercise`,
       // ])
       .src([
-        `${nameLesson}/resources/exercise/**/*(*.css|index.html|assets/images)/**`,
+        `${nameLesson}/resources/exercise/**/*(*.css|index.html|assets)/**`,
         // `${nameLesson}/resources/exercise/**/*.css`,
         // `${nameLesson}/resources/exercise/**/index.html`,
-        // `!${nameLesson}/resources/exercise`,
+        `!${nameLesson}/**/audio/**`,
       ])
       .pipe(gulpDebug())
 

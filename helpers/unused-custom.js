@@ -79,7 +79,7 @@ function unusedImages(options) {
       );
     }
 
-    if (mime.getType(chunk.path).match(/image\//)) {
+    if (mime.getType(chunk.path)?.match(/image\//)) {
       imageNames.push(path.basename(chunk.path));
       return callback();
     }

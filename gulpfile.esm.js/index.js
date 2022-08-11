@@ -1,102 +1,28 @@
-import { src, series, parallel, dest } from "gulp";
-import cleanhtml from "./clean-html";
-import cleancss from "./css/clean-css";
+import { src, dest, series } from "gulp";
+import html from "./html";
 import css from "./css";
+import js from "./js";
+import files from "./files";
+import del from "del";
 import imagemin from "./minify-images";
 import imageclean from "./clean-images.js";
-import cleanjs from "./clean-js";
-import renameImgs from "./rename-images";
-import consoleRemove from "./console-remove";
-// import vinylPaths from "vinyl-paths";
-import del from "del";
-import gulpStripDebug from "gulp-strip-debug";
-import gulpPlumber from "gulp-plumber";
+import renameImgs from "./files/rename-images";
+import consoleRemove from "./js/console-remove";
+import libs from "./libs";
 import gulpCheerio from "gulp-cheerio";
 import _ from "lodash";
-import { each } from "lodash";
 import purgecss from "gulp-purgecss";
-import deleteEmpty from "delete-empty";
-
-import gulp from "gulp";
-
-import glob from "glob";
+import { fixCssAtr, rmMath } from "./html/find-elements";
 import debug from "gulp-debug";
-export const rmEmpty = (cb) => {
-  deleteEmpty("src/*/")
-    .then((deleted) => console.log("->", deleted)) //=> ['foo/aa/', 'foo/a/cc/', 'foo/b/', 'foo/c/']
-    .catch(console.error);
-  cb();
-};
-export const delFolders = async () =>
-  await del([
-    "src/**/webfonts",
-    "src/**/sass",
-    "src/**/fontawesome*",
-    "src/**/INFROMAN*",
-    "src/**/AptiferSansLTPro*",
-    "src/**/CandyShopBlack*",
-    "src/**/LCALLIG*",
-    "src/**/Quicksand*", // only after renaming the fonts to lower case
-    "src/**/quicksandlight*",
-    "src/**/quicksandregular*",
-    "src/**/quicksandsemi*",
-    "src/**/Sasso*",
-    "src/**/.vscode",
-  ]);
+import { copyFonts } from "./libs/copy-files";
 
-export const findEXc = async (cb) => {
-  src("src/**/index.html")
-    .pipe(debug())
-    .pipe(
-      gulpCheerio(function ($, file) {
-        let x = 0;
-        let crnt = "";
-        $("iframe[src]").each(function () {
-          if ($(this).attr("src") != crnt) {
-            x++;
-          }
-          console.log("used excercie path ->", $(this).attr("src"));
-          console.log(
-            `ex${x}->`,
-            $(this).attr("src").split("exercise/")[1].split("/index")[0]
-          );
-          crnt = $(this).attr("src");
-        });
-        console.log("-".repeat(10));
-      })
-    );
-  cb();
-};
-export const findAud = async (cb) => {
-  src("src/**/index.html")
-    .pipe(debug())
-    .pipe(
-      gulpCheerio(function ($, file) {
-        let x = 0;
-        let crnt = "";
-        $("[data-audiosrc]").each(function () {
-          console.log("used audio path ->", $(this).attr("data-audiosrc"));
-          // console.log(`ex${x}->`, $(this).attr("src").split("exercise/")[1].split("/index")[0]);
-        });
-        console.log("-".repeat(10));
-      })
-    );
-  cb();
-};
-
-export const findLight = async () =>
-  await src("src/**/index.html")
-    .pipe(debug())
-    .pipe(
-      gulpCheerio(function ($, file) {
-        console.log($(".iframe-lightbox").length);
-      })
-    );
+import { animateLib } from "./libs/copy-files";
 export const renameInPath = async () =>
   await src("src/**/*.html")
-    .pipe(debug())
+    // .pipe(debug())
     .pipe(
       gulpCheerio(function ($, file, done) {
+        console.log("_".repeat(10), file.path, "_".repeat(10));
         $("img[src]").each(function () {
           const fileName = $(this).attr("src").split("/").at(-1).split(".")[0];
           const lwrFileName = _.replace(_.lowerCase(fileName), / /g, "");
@@ -104,7 +30,6 @@ export const renameInPath = async () =>
           const lwrFileExt = _.replace(_.lowerCase(fileExt), / /g, "");
           const fullName = [fileName, fileExt].join(".");
           const lwrfullName = [lwrFileName, lwrFileExt].join(".");
-
           console.log("old->", fileName);
           console.log(
             "new->",
@@ -120,6 +45,7 @@ export const renameInPath = async () =>
       })
     )
     .pipe(dest("src"));
+
 export const cssPrg = () =>
   src(["src/**/*.css", "!src/**/*.min.css"])
     .pipe(
@@ -129,33 +55,49 @@ export const cssPrg = () =>
     )
     .pipe(dest("src"));
 
-// const destinationFolders = glob.sync("src/**/mainsite/js");
-// const destinationFolders = glob.sync("src/**/exercise/*/css/lib");
-// const destinationFolders = glob.sync("src/**/exercise/*/font");
-const destinationFolders = glob.sync("src/**/assets/mainsite/css");
-// const destinationFolders = glob.sync("src/**/assets/mainsite/css");
-// ,"src/**/exercise/**/js/lib"]);
-// const destinationFolders = glob.sync(["src/**/mainsite/js"
+exports.cpFonts = series(
+  copyFonts,
+  async () =>
+    await del.sync([
+      "src/**/webfonts",
+      "src/**/sass",
+      "src/**/fontawesome*",
+      "src/**/INFROMAN*",
+      "src/**/AptiferSansLTPro*",
+      "src/**/CandyShopBlack*",
+      "src/**/LCALLIG*",
+      "src/**/Quicksand*", // only after renaming the fonts to lower case
+      "src/**/quicksandlight*",
+      "src/**/quicksandregular*",
+      "src/**/quicksandsemi*",
+      "src/**/Sasso*",
+      "src/**/.vscode",
+    ])
+);
 
-gulp.task("copyFiles", function () {
-  // var stream = gulp.src("library/popper.min.js");
-  // var stream = gulp.src("library/animate.min.css");
-  var stream = gulp.src("library/fonts.css");
-
-  destinationFolders.forEach(function (skinFolder) {
-    stream = stream.pipe(gulp.dest(skinFolder,{overwrite:true}));
-    console.log(skinFolder);
-  });
-
-  return stream;
-});
-exports.html = cleanhtml;
+exports.html = html.clean;
 exports.css = css.clean;
-exports.js = cleanjs;
+exports.cssfx = css.fix;
+exports.js = js.clean;
 exports.delimg = imageclean;
 exports.imagemin = imagemin;
 exports.renameImgs = renameImgs;
 exports.rmCsl = consoleRemove;
-exports.cssfx = css.fix;
+exports.renameDirs = files.rename.dirs;
+exports.delFiles = files.delete;
+
+exports.cp = libs.extFont;
+exports.animate = animateLib;
+exports.find = html.find.lightBox;
+exports.cssAtr = fixCssAtr;
+exports.math = rmMath;
+const popper = series(libs.popper.copy, libs.popper.find);
+
+exports.cdn = series(
+  html.del.math,
+  html.find.lightBox,
+  libs.popper.all,
+  libs.animate
+);
 // export const rnmImg = series(renameImgs, moveNotImg);
-exports.default = parallel(cleancss, cleanhtml);
+// exports.default = parallel(cleancss, cleanhtml);
