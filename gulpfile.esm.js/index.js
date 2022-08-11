@@ -17,6 +17,18 @@ import debug from "gulp-debug";
 import { copyFonts } from "./libs/copy-files";
 
 import { animateLib } from "./libs/copy-files";
+
+/**
+ * Steps:
+ * 1- rename files and folders
+ * 2- rename pathes in code (js | html | css)
+ *
+ * 3- fix css {|_|}
+ * 4- clean html, css, js
+ * 5- clean font files
+ *
+ */
+
 export const renameInPath = async () =>
   await src("src/**/*.html")
     // .pipe(debug())
