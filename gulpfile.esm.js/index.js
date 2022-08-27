@@ -1,4 +1,5 @@
 import { src, dest, series } from "gulp";
+import { glob } from "glob";
 import html from "./html";
 import css from "./css";
 import js from "./js";
@@ -9,63 +10,23 @@ import imageclean from "./clean-images.js";
 import renameImgs from "./files/rename-images";
 import consoleRemove from "./js/console-remove";
 import libs from "./libs";
-import gulpCheerio from "gulp-cheerio";
 import _ from "lodash";
-import purgecss from "gulp-purgecss";
-import { fixCssAtr, rmMath } from "./html/find-elements";
-import debug from "gulp-debug";
+import { findEXc, fixCssAtr, rmMath } from "./html/find-elements";
 import { copyFonts } from "./libs/copy-files";
 
 import { animateLib } from "./libs/copy-files";
-
+import { findAudio } from "./html/find-elements";
 /**
  * Steps:
+ * 0-
  * 1- rename files and folders
  * 2- rename pathes in code (js | html | css)
  *
  * 3- fix css {|_|}
- * 4- clean html, css, js
+ * 4- clean html, css, console then js
  * 5- clean font files
  *
  */
-
-export const renameInPath = async () =>
-  await src("src/**/*.html")
-    // .pipe(debug())
-    .pipe(
-      gulpCheerio(function ($, file, done) {
-        console.log("_".repeat(10), file.path, "_".repeat(10));
-        $("img[src]").each(function () {
-          const fileName = $(this).attr("src").split("/").at(-1).split(".")[0];
-          const lwrFileName = _.replace(_.lowerCase(fileName), / /g, "");
-          const fileExt = $(this).attr("src").split("/").at(-1).split(".")[1];
-          const lwrFileExt = _.replace(_.lowerCase(fileExt), / /g, "");
-          const fullName = [fileName, fileExt].join(".");
-          const lwrfullName = [lwrFileName, lwrFileExt].join(".");
-          console.log("old->", fileName);
-          console.log(
-            "new->",
-            _.replace($(this).attr("src"), fullName, lwrfullName)
-          );
-
-          $(this).attr(
-            "src",
-            _.replace($(this).attr("src"), fullName, lwrfullName)
-          );
-        });
-        done();
-      })
-    )
-    .pipe(dest("src"));
-
-export const cssPrg = () =>
-  src(["src/**/*.css", "!src/**/*.min.css"])
-    .pipe(
-      purgecss({
-        content: ["src/**/index.html", "src/**/*.js"],
-      })
-    )
-    .pipe(dest("src"));
 
 exports.cpFonts = series(
   copyFonts,
@@ -86,7 +47,16 @@ exports.cpFonts = series(
       "src/**/.vscode",
     ])
 );
-
+exports.delFF = async () => await del.sync(["src/**/font/*", "src/**/fonts/*"]);
+exports.capFF = function () {
+  const destinationFolders = glob.sync("src/**/font*/");
+  let stream = src("library/Quicksand*");
+  destinationFolders.forEach(function (skinFolder) {
+    stream = stream.pipe(dest(skinFolder, { overwrite: true }));
+    console.log(skinFolder);
+  });
+  return stream;
+};
 exports.html = html.clean;
 exports.css = css.clean;
 exports.cssfx = css.fix;
@@ -95,15 +65,18 @@ exports.delimg = imageclean;
 exports.imagemin = imagemin;
 exports.renameImgs = renameImgs;
 exports.rmCsl = consoleRemove;
+
 exports.renameDirs = files.rename.dirs;
 exports.delFiles = files.delete;
+exports.renameFiles = files.rename.files;
+exports.renameFiles = files.rename.files;
 
-exports.cp = libs.extFont;
 exports.animate = animateLib;
 exports.find = html.find.lightBox;
 exports.cssAtr = fixCssAtr;
 exports.math = rmMath;
-const popper = series(libs.popper.copy, libs.popper.find);
+
+exports.font = series(libs.extFont, copyFonts);
 
 exports.cdn = series(
   html.del.math,
@@ -111,5 +84,14 @@ exports.cdn = series(
   libs.popper.all,
   libs.animate
 );
+exports.popper = libs.popper.copy;
+exports.cleanToFiles = series(
+  files.delete,
+  files.rename.dirs,
+  files.rename.files,
+  files.rename.paths
+);
 // export const rnmImg = series(renameImgs, moveNotImg);
 // exports.default = parallel(cleancss, cleanhtml);
+exports.findAudio = findAudio;
+exports.exercise = findEXc;

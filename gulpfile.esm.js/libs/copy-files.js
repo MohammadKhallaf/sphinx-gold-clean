@@ -50,20 +50,6 @@ export const animateLib = series(animateCopy, findAnimate);
 // ,"src/**/exercise/**/js/lib"]);
 // const destinationFolders = glob.sync(["src/**/mainsite/js"
 
-export const copyCssFont = function () {
-  // let stream = src("library/popper.min.js");
-  // let stream = src("library/animate.min.css");
-  // let stream = src("library/fonts.css");
-  let stream = src("library/quicksand*");
-
-  cssFont.forEach(function (skinFolder) {
-    stream = stream.pipe(dest(skinFolder, { overwrite: true }));
-    console.log(skinFolder);
-  });
-
-  return stream;
-};
-
 const popperFolders = glob.sync("src/**/assets/mainsite/js");
 export const copyPopper = function () {
   console.log("{|-- copy popper files --|}");
@@ -92,6 +78,21 @@ export const findPopper = (cb) => {
     )
     .pipe(dest("src", { overwrite: true }));
   cb();
+};
+
+/******************* */
+export const copyCssFont = function () {
+  // let stream = src("library/popper.min.js");
+  // let stream = src("library/animate.min.css");
+  // let stream = src("library/fonts.css");
+  let stream = src("library/quicksand*");
+
+  cssFont.forEach(function (skinFolder) {
+    stream = stream.pipe(dest(skinFolder, { overwrite: true }));
+    console.log(skinFolder);
+  });
+
+  return stream;
 };
 
 const exFont = glob.sync("src/**/assets/mainsite/css");

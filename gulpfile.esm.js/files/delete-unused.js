@@ -15,5 +15,6 @@ export default async () =>
       // "src/**/quicksandsemi*",
       "src/**/Sasso*",
       "src/**/.vscode",
+      
     ]
   );
